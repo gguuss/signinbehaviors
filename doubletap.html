@@ -1,0 +1,87 @@
+<!-- Update your html tag to include the itemscope and itemtype attributes. -->
+<html itemscope itemtype="http://schema.org/Article">
+  <title>Demo: Altering the sign-in button callback behavior 2, the "doubletap"</title>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <head>
+
+  <meta itemprop="name" content="Approach 2: The &quot;Doubletap&quot;">
+  <meta itemprop="description" content="An approach to altering the sign-in button behavior.">
+  <meta itemprop="image" content="http://collider.com/wp-content/image-base/Movies/Z/Zombieland/slices/slice_zombieland_jesse_eisenberg_double-tap_t_shirt_01.jpg">
+  <script type="text/javascript">
+  var token = "";
+  var tapCount = 0;
+  function onSigninCallbackVanilla(authResponse){
+    // Used in a basic case where the button is rendered
+    token = authResponse.access_token;
+    if (authResponse.error == undefined){
+      tapCount++;
+      $('#disconnect').show();
+      if (tapCount > 1){
+        $("#signinButton").hide();
+      }
+    }
+  }
+  </script>
+  </head>
+  <body>
+    <h1>Approach 2: "Doubletap"
+    <p>
+      <span id="signinButton" onClick="tapCount++;">
+        <span
+          class="g-signin"
+          data-callback="onSigninCallbackVanilla"
+          data-clientid="268858962829.apps.googleusercontent.com"
+          data-cookiepolicy="single_host_origin"
+          data-requestvisibleactions="http://schemas.google.com/AddActivity"
+          data-theme="dark"
+          data-scope="https://www.googleapis.com/auth/plus.login">
+        </span>
+      </span>
+    </p>
+    <p>
+    <div id="disconnect">
+    <button onClick="disconnectUser()" id="revokeButton">Disconnect</button>
+    </div>
+
+    </p>
+
+  <script type="text/javascript">
+  gapi.signin.go();
+  function disconnectUser() {
+    var access_token = token;
+    var revokeUrl = 'https://accounts.google.com/o/oauth2/revoke?token=' +
+        access_token;
+
+    // Perform an asynchronous GET request.
+    $.ajax({
+      type: 'GET',
+      url: revokeUrl,
+      async: false,
+      contentType: "application/json",
+      dataType: 'jsonp',
+      success: function(nullResponse) {
+        // Do something now that user is disconnected
+        // The response is always undefined.
+      },
+      error: function(e) {
+        // Handle the error
+        // console.log(e);
+        // You could point users to manually disconnect if unsuccessful
+        // https://plus.google.com/apps
+      }
+    });
+  }
+  // Could trigger the disconnect on a button click
+  $('#revokeButton').click(disconnectUser);
+</script>
+
+  </body>
+
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</html>

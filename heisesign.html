@@ -1,0 +1,70 @@
+<html>
+  <!-- Place this asynchronous JavaScript just before your </body> tag -->
+  <script type="text/javascript" src="https://apis.google.com/js/client:plusone.js">
+  {"parsetags": "explicit"}
+  </script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <head>
+  <script type="text/javascript">
+  var token = "";
+  function onSigninCallbackVanilla(authResponse){
+    // Used in a basic case where the button is rendered
+    token = authResponse.access_token;
+    if (authResponse.error == undefined){
+      $('#disconnect').show();
+      $("#signinButton").hide();
+    }
+  }
+  </script>
+  </head>
+  <body>
+    <div id="disconnect">
+    <button id="revokeButton">Disconnect</button>
+    </div>
+    <h1>Approach 1: Heise
+    <p>
+      <span id="signinButton">
+        <img id="shim" src="notactive.png" onclick="gapi.signin.go(); $('#shim').hide();"></img>
+        <span
+          class="g-signin"
+          data-callback="onSigninCallbackVanilla"
+          data-clientid="268858962829.apps.googleusercontent.com"
+          data-cookiepolicy="single_host_origin"
+          data-requestvisibleactions="http://schemas.google.com/AddActivity"
+          data-theme="dark"
+          data-scope="https://www.googleapis.com/auth/plus.login">
+        </span>
+      </span>
+    </p>
+
+  <script type="text/javascript">
+  function disconnectUser() {
+    var access_token = token;
+    var revokeUrl = 'https://accounts.google.com/o/oauth2/revoke?token=' +
+        access_token;
+
+    // Perform an asynchronous GET request.
+    $.ajax({
+      type: 'GET',
+      url: revokeUrl,
+      async: false,
+      contentType: "application/json",
+      dataType: 'jsonp',
+      success: function(nullResponse) {
+        // Do something now that user is disconnected
+        // The response is always undefined.
+      },
+      error: function(e) {
+        // Handle the error
+        // console.log(e);
+        // You could point users to manually disconnect if unsuccessful
+        // https://plus.google.com/apps
+      }
+    });
+  }
+  // Could trigger the disconnect on a button click
+  $('#revokeButton').click(disconnectUser);
+</script>
+
+  </body>
+</html>
